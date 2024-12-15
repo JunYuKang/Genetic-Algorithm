@@ -8,7 +8,7 @@ class init_x:
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.bits = bits
-    
+
     def gene(self):
         random_bits = random.getrandbits(self.bits)
         x_bits = bin(random_bits)[2:].zfill(self.bits)
@@ -32,11 +32,11 @@ def genetic_algorithm(x20):
             f_value = 21.5 + x1_float * sin(4 * pi * x1_float) + x2_float * sin(20 * pi * x2_float)
             x20.append([i + 1, new_x_bits, new_x_float, f_value])
 
-    print(tabulate(x20, tablefmt='grid'))
+    # print(tabulate(x20, tablefmt='grid'))
 
     # 計算總和
     x20_total = sum(x[3] for x in x20)
-    print('總和 :', x20_total)
+    # print('總和 :', x20_total)
 
     # 計算累積機率
     c20 = []
@@ -46,7 +46,7 @@ def genetic_algorithm(x20):
         cumulative_sum += c
         c20.append([x20[i][0], x20[i][3], cumulative_sum])
 
-    print(tabulate(c20, tablefmt='grid'))
+    # print(tabulate(c20, tablefmt='grid'))
 
     # 生成隨機數據
     random_20 = []
@@ -55,7 +55,7 @@ def genetic_algorithm(x20):
         random_float2 = random.uniform(0, 1)
         random_20.append([i + 1, random_float1, random_float2])
 
-    print(tabulate(random_20, tablefmt='grid'))
+    # print(tabulate(random_20, tablefmt='grid'))
 
     # 輪盤選擇
     new_population = []
@@ -69,7 +69,7 @@ def genetic_algorithm(x20):
     best_individual = max(x20, key=lambda x: x[3])
     new_population[0] = best_individual
 
-    print(tabulate(new_population, tablefmt='grid'))
+    # print(tabulate(new_population, tablefmt='grid'))
 
     # 交叉操作
     crossed_population = []
@@ -77,10 +77,10 @@ def genetic_algorithm(x20):
         if random_20[i][2] < 0.25:
             crossed_population.append(new_population[i])
 
-    print('交配後的族群')
-    print(tabulate(crossed_population, tablefmt='grid'))
+    # print('交配後的族群')
+    # print(tabulate(crossed_population, tablefmt='grid'))
 
-    # 交叉操作示例（單點交叉）
+    # 交叉操作（單點交叉）
     def single_point_crossover(parent1, parent2):
         crossover_point = random.randint(1, len(parent1[1]) - 1)
         child1_bits = parent1[1][:crossover_point] + parent2[1][crossover_point:]
@@ -94,20 +94,20 @@ def genetic_algorithm(x20):
             parent1 = crossed_population[i]
             parent2 = crossed_population[i + 1]
             child1_bits, child2_bits = single_point_crossover(parent1, parent2)
-            
+
             # 計算子代的浮點數值和適應值
             child1_x1_bits = child1_bits[:18]
             child1_x2_bits = child1_bits[18:]
             child1_x1_float = x1.lower_bound + int(child1_x1_bits, 2) * (x1.upper_bound - x1.lower_bound) / (2 ** x1.bits - 1)
             child1_x2_float = x2.lower_bound + int(child1_x2_bits, 2) * (x2.upper_bound - x2.lower_bound) / (2 ** x2.bits - 1)
             child1_f_value = 21.5 + child1_x1_float * sin(4 * pi * child1_x1_float) + child1_x2_float * sin(20 * pi * child1_x2_float)
-            
+
             child2_x1_bits = child2_bits[:18]
             child2_x2_bits = child2_bits[18:]
             child2_x1_float = x1.lower_bound + int(child2_x1_bits, 2) * (x1.upper_bound - x1.lower_bound) / (2 ** x1.bits - 1)
             child2_x2_float = x2.lower_bound + int(child2_x2_bits, 2) * (x2.upper_bound - x2.lower_bound) / (2 ** x2.bits - 1)
             child2_f_value = 21.5 + child2_x1_float * sin(4 * pi * child2_x1_float) + child2_x2_float * sin(20 * pi * child2_x2_float)
-            
+
             new_generation.append([len(new_generation) + 1, child1_bits, (child1_x1_float, child1_x2_float), child1_f_value])
             new_generation.append([len(new_generation) + 1, child2_bits, (child2_x1_float, child2_x2_float), child2_f_value])
 
@@ -117,8 +117,8 @@ def genetic_algorithm(x20):
             else:
                 new_population.append(new_generation[i])
 
-        print('更新後的族群')
-        print(tabulate(new_population, tablefmt='grid'))
+        # print('更新後的族群')
+        # print(tabulate(new_population, tablefmt='grid'))
 
     # 突變操作
     mutation_rate = 0.1  # 突變率
@@ -141,14 +141,16 @@ def genetic_algorithm(x20):
 
 x20 = []
 fitness_history = []
-for generation in range(10000):
+for generation in range(1000):
     x20 = genetic_algorithm(x20)
     # 記錄每次迭代的最佳適應值
     best_fitness = max(individual[3] for individual in x20)
     fitness_history.append(best_fitness)
 
+print('最佳值 :', max(fitness_history))
+
 # 繪製折線圖
-plt.plot(range(1, 10001), fitness_history, marker='o')
+plt.plot(range(1, 1001), fitness_history, marker='o')
 plt.title('Best Fitness Value Over Generations')
 plt.xlabel('Generation')
 plt.ylabel('Best Fitness Value')
